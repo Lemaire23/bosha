@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brainrot Camera</title>
+
+<style>
+
+body{
+margin:0;
+overflow:hidden;
+background:black;
+font-family:Arial;
+}
+
+video{
+position:absolute;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+canvas{
+position:absolute;
+width:100%;
+height:100%;
+}
+
+button{
+position:absolute;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+padding:15px 30px;
+border-radius:20px;
+border:none;
+font-size:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas"></canvas>
+
+<button onclick="toggle()">Brainrot ON</button>
+
+<script>
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let brainrot = true;
+
+const characters = [
+"🧠","👾","🐸","👁️","💥","🌀","🤯","✨","💀","🦠"
+];
+
+const sprites = [];
+
+function resize(){
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+}
+
+resize();
+window.addEventListener("resize", resize);
+
+async function startCamera(){
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:{facingMode:"environment"},
+audio:false
+});
+
+video.srcObject = stream;
+
+}
+
+startCamera();
+
+function spawn(){
+
+sprites.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5)*6,
+vy:(Math.random()-0.5)*6,
+size:40+Math.random()*60,
+life:200,
+char:characters[Math.floor(Math.random()*characters.length)]
+});
+
+if(sprites.length>30) sprites.shift();
+
+}
+
+function draw(){
+
+requestAnimationFrame(draw);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+if(brainrot){
+
+if(Math.random()<0.1){
+spawn();
+}
+
+sprites.forEach(s=>{
+
+ctx.font=s.size+"px serif";
+ctx.fillText(s.char,s.x,s.y);
+
+s.x+=s.vx;
+s.y+=s.vy;
+
+s.life--;
+
+});
+
+}
+
+}
+
+draw();
+
+function toggle(){
+
+brainrot=!brainrot;
+
+}
+
+</script>
+
+</body>
+</html>
