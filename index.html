@@ -1,0 +1,469 @@
+<!DOCTYPE html><html lang="fr">
+<html><meta charset="UTF-8">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOSHA</title>
+</head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOSHA</title>
+  <style>
+    body{margin:0;font-family:Arial;background:#f6f6f6;}
+    .page{padding:20px 18px 90px 18px; display:none;}
+    .active{display:block;}
+    .card{background:#fff;border-radius:14px;padding:14px;margin:12px 0; box-shadow:0 2px 10px rgba(0,0,0,.06);}
+    h2{margin:8px 0;}
+    .btn{background:#000;color:#fff;border:none;border-radius:12px;padding:12px 14px;font-size:16px;width:100%;}
+    .btn2{background:#fff;color:#000;border:1px solid #ddd;border-radius:12px;padding:10px 12px;font-size:14px;width:100%;}
+    input, select, textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;box-sizing:border-box;margin:8px 0;background:#fff;}
+    .row{display:flex;gap:10px;}
+    .row > div{flex:1;}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#f0f0f0;margin-right:6px;font-size:12px;}
+    .nav{position:fixed;bottom:0;left:0;width:100%;background:#000;display:flex;}
+    .nav button{flex:1;padding:14px 8px;color:#fff;background:#000;border:none;font-size:14px;opacity:.85}
+    .nav button.activeBtn{opacity:1;font-weight:bold;}
+    .small{font-size:12px;color:#666;margin-top:6px}
+    .top{background:#000;color:#fff;padding:18px;border-bottom-left-radius:18px;border-bottom-right-radius:18px;}
+    .top p{opacity:.9;margin:6px 0 0 0}
+  </style>
+</head>
+<body>
+
+  <!-- HOME -->
+  <div id="home" class="page active">
+    <div class="top">
+      <h2>BOSHA</h2>
+      <p>Apprendre une langue pour voyager — avec des profs humains.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag">Voyage</span><span class="tag">Langues</span><span class="tag">Réservation</span>
+      <h2>Commencer</h2>
+      <p>Choisis une langue, trouve un prof, réserve une session.</p>
+      <button class="btn" onclick="showPage('find')">Trouver un professeur</button>
+      <p class="small">Prototype BOSHA (version téléphone)</p>
+    </div>
+
+    <div class="card">
+      <h2>Ce que BOSHA promet</h2>
+      <p>✅ Des profs sélectionnés • ✅ Réservation simple • ✅ Objectif “parler vite”.</p>
+      <button class="btn2" onclick="showPage('book')">Réserver maintenant</button>
+    </div>
+  </div>
+
+  <!-- FIND -->
+  <div id="find" class="page">
+    <h2>Trouver un professeur</h2>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label>Langue</label>
+          <select id="langFilter" onchange="renderTeachers()">
+            <option value="all">Toutes</option>
+            <option value="English">Anglais</option>
+            <option value="French">Français</optioni>
+            <option value="Spanish">Espagnol</option>
+            <option value="Turkish">Turc</option>
+          </select>
+        </div>
+        <div>
+          <label>Budget</label>
+          <select id="priceFilter" onchange="renderTeachers()">
+            <option value="all">Tous</option>
+            <option value="low">Éco</option>
+            <option value="mid">Standard</option>
+            <option value="high">Premium</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Recherche (nom / spécialité)</label>
+      <input id="q" placeholder="ex: travel, hôtesse, prononciation..." oninput="renderTeachers()">
+    </div>
+
+    <div id="teacherList"></div>
+  </div>
+
+  <!-- BOOK -->
+  <div id="book" class="page">
+    <h2>Réserver une session</h2>
+
+    <div class="card">
+      <label>Ton prénom</label>
+      <input id="name" placeholder="Ex: Christelle">
+
+      <div class="row">
+        <div>
+          <label>Langue</label>
+          <select id="lang">
+            <option>English</option>
+            <option>French</option>
+            <option>Spanish</option>
+            <option>Turkish</option>
+          </select>
+        </div>
+        <div>
+          <label>Niveau</label>
+          <select id="level">
+            <option>Débutant</option>
+            <option>Intermédiaire</option>
+            <option>Avancé</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Objectif (voyage, boulot, etc.)</label>
+      <input id="goal" placeholder="Ex: parler en voyage, entretien, cabine...">
+
+      <label>Date souhaitée</label>
+      <input id="date" type="date">
+
+      <label>Message au prof</label>
+      <textarea id="msg" rows="4" placeholder="Ex: Je veux pratiquer des dialogues aéroport/hôtel..."></textarea>
+
+      <button class="btn" onclick="submitBooking()">Envoyer la demande</button>
+      <p class="small" id="bookingResult"></p>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profile" class="page">
+    <h2>Profil</h2>
+
+    <div class="card">
+      <h3>Favoris</h3>
+      <div id="favList" class="small">Aucun favori pour l’instant.</div>
+    </div>
+
+    <div class="card">
+      <h3>Actions</h3>
+      <button class="btn2" onclick="clearFavs()">Vider les favoris</button>
+      <p class="small">Les favoris sont stockés sur ton téléphone (localStorage).</p>
+    </div>
+  </div><div id="teach" class="page">
+  <h2>Espace Prof</h2>
+
+  <div class="card">
+    <h3>Inscription rapide</h3>
+
+    <label>Nom du prof</label>
+    <input id="t_name" placeholder="Ex: Nadia">
+
+    <label>Langue</label>
+    <select id="t_lang">
+      <option>English</option>
+      <option>French</option>
+      <option>Spanish</option>
+      <option>Turkish</option>
+    </select>
+
+    <label>Spécialité</label>
+    <input id="t_spec" placeholder="Ex: conversation voyage, aviation English...">
+
+    <label>Prix</label>
+    <select id="t_price">
+      <option value="low">Éco</option>
+      <option value="mid">Standard</option>
+      <option value="high">Premium</option>
+    </select>
+
+    <button class="btn" onclick="addTeacher()">Créer mon profil</button>
+    <p class="small" id="t_result"></p>
+
+    <p class="small">✅ Le prof apparaît automatiquement dans l’onglet “Profs”.</p>
+  </div>
+</div>
+
+  <!-- NAV -->
+  <div class="nav">
+<div class="nav">
+  <button id="btnHome" class="activeBtn" onclick="showPage('home')">Accueil</button>
+  <button id="btnFind" onclick="showPage('find')">Profs</button>
+  <button id="btnBook" onclick="showPage('book')">Réserver</button>
+  <button id="btnProfile" onclick="showPage('profile')">Profil</button>
+  <button id="btnTeach" onclick="showPage('teach')">Prof</button>
+</div>
+
+<script>
+  // Données profs (tu peux modifier/ajouter)
+  const allteachers = [
+    {id:1, name:"Maya", lang:"English", specialty:"Travel + Prononciation", price:"mid"},
+    {id:2, name:"Karim", lang:"French", specialty:"Conversation rapide", price:"low"},
+    {id:3, name:"Sofia", lang:"Spanish", specialty:"Débutants + dialogues", price:"mid"},
+    {id:4, name:"Efe", lang:"Turkish", specialty:"Voyage + phrases utiles", price:"high"},
+    {id:5, name:"Nina", lang:"English", specialty:"Cabin/aviation English", price:"high"}
+  ];
+
+  function showPage(id){
+    // pages
+    ["home","find","book","profile"].forEach(p=>{
+      document.getElementById(p).classList.remove("active");
+    });
+    document.getElementById(id).classList.add("active");
+
+    // nav buttons
+    document.getElementById("btnHome").classList.remove("activeBtn");
+    document.getElementById("btnFind").classList.remove("activeBtn");
+    document.getElementById("btnBook").classList.remove("activeBtn");
+    document.getElementById("btnProfile").classList.remove("activeBtn");
+
+    if(id==="home") document.getElementById("btnHome").classList.add("activeBtn");
+    if(id==="find") document.getElementById("btnFind").classList.add("activeBtn");
+    if(id==="book") document.getElementById("btnBook").classList.add("activeBtn");
+    if(id==="profile") { document.getElementById("btnProfile").classList.add("activeBtn"); renderFavs(); }
+
+    if(id==="find") renderTeachers();
+  }
+
+  function priceLabel(p){
+    if(p==="low") return "Éco";
+    if(p==="mid") return "Standard";
+    return "Premium";
+  }
+
+  function getFavs(){
+    try{
+      return JSON.parse(localStorage.getItem("bosha_favs") || "[]");
+    } catch(e){ return []; }
+  }
+
+  function setFavs(arr){
+    localStorage.setItem("bosha_favs", JSON.stringify(arr));
+  }
+
+  function toggleFav(id){
+    const favs = getFavs();
+    const idx = favs.indexOf(id);
+    if(idx>=0) favs.splice(idx,1);
+    else favs.push(id);
+    setFavs(favs);
+    renderTeachers();
+  }
+
+  function renderTeachers(){
+    const lang = document.getElementById("langFilter").value;
+    const price = document.getElementById("priceFilter").value;
+    const q = (document.getElementById("q").value || "").toLowerCase().trim();
+
+    const favs = getFavs();const allTeachers = teachers.concat(getCustomTeachers());
+
+    const filtered = allteachers.filter(t=>{
+      const okLang = (lang==="all") || (t.lang===lang);
+      const okPrice = (price==="all") || (t.price===price);
+      const okQ = !q || (t.name.toLowerCase().includes(q) || t.specialty.toLowerCase().includes(q));
+      return okLang && okPrice && okQ;
+    });
+
+    const list = document.getElementById("teacherList");
+    list.innerHTML = "";
+
+    filtered.forEach(t=>{
+      const isFav = favs.includes(t.id);
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h3>${t.name} • ${t.lang}</h3>
+        <p><span class="tag">${t.specialty}</span> <span class="tag">${priceLabel(t.price)}</span></p>
+        <div class="row">
+          <div><button class="btn2" onclick="prefillBooking('${t.lang}','${t.name}')">Réserver</button></div>
+          <div><button class="btn2" onclick="toggleFav(${t.id})">${isFav ? "Retirer ⭐" : "Ajouter ⭐"}</button></div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+    if(filtered.length===0){
+      list.innerHTML = `<div class="card"><p>Aucun résultat. Essaie un autre filtre.</p></div>`;
+    }
+  }
+
+  function prefillBooking(lang, teacher){
+    showPage("book");
+    document.getElementById("lang").value = lang;
+    document.getElementById("bookingResult").textContent = `Demande pour ${teacher} (${lang}) — remplis puis envoie.`;
+  }
+
+  function submitBooking(){
+    const name = document.getElementById("name").value.trim();
+    const lang = document.getElementById("lang").value;
+    const level = document.getElementById("level").value;
+    const goal = document.getElementById("goal").value.trim();
+    const date = document.getElementById("date").value;
+    const msg = document.getElementById("msg").value.trim();
+
+    if(!name || !goal || !date){
+      document.getElementById("bookingResult").textContent = "Remplis au moins : prénom + objectif + date.";
+      return;
+    }
+
+    // Prototype: on simule l'envoi
+    document.getElementById("bookingResult").textContent =
+      `✅ Demande envoyée: ${name} | ${lang} | ${level} | ${date}. (Prototype)`;
+
+    // Option: reset léger
+    // document.getElementById("msg").value = "";
+  }
+
+  function renderFavs(){
+    const favs = getFavs();
+    const box = document.getElementById("favList");
+    if(!favs.length){
+      box.textContent = "Aucun favori pour l’instant.";
+      return;
+    }
+    const names = teachers.filter(t=>favs.includes(t.id)).map(t=>`${t.name} (${t.lang})`);
+    box.innerHTML = "⭐ " + names.join("<br>⭐ ");
+  }
+
+  function clearFavs(){
+    setFavs([]);
+    renderFavs();
+    renderTeachers();
+  }
+
+  // init
+  renderTeachers();
+</script>
+
+</body>
+</html>["home","find","book","profile"].forEach(p=>{["home","find","book","profile","teach"].forEach(p=>{document.getElementById("btnHome").classList.remove("activeBtn");
+document.getElementById("btnFind").classList.remove("activeBtn");
+document.getElementById("btnBook").classList.remove("activeBtn");
+document.getElementById("btnProfile").classList.remove("activeBtn");document.getElementById("btnTeach").classList.remove("activeBtn");if(id==="teach") document.getElementById("btnTeach").classList.add("activeBtn");function getCustomTeachers(){
+  try{
+    return JSON.parse(localStorage.getItem("bosha_teachers") || "[]");
+  } catch(e){ return []; }
+}
+
+function setCustomTeachers(arr){
+  localStorage.setItem("bosha_teachers", JSON.stringify(arr));
+}
+
+function addTeacher(){
+  const name = document.getElementById("t_name").value.trim();
+  const lang = document.getElementById("t_lang").value;
+  const spec = const photo = document.getElementById("t_photo").value.trim();
+const wa = document.getElementById("t_wa").value.trim();
+const avail = document.getElementById("t_avail").value.trim();document.getElementById("t_spec").value.trim();
+  const price = document.getElementById("t_price").value;
+
+  if(!name || !spec){
+    document.getElementById("t_result").textContent = "Remplis au moins : nom + spécialité.";
+    return;
+  }
+
+  const custom = getCustomTeachers();
+  const newT = {
+    id: Date.now(), // id unique simple
+    name: name,
+    lang: lang,
+    specialty: spec,
+    price: price
+  };
+
+  custom.push(newT);
+  setCustomTeachers(custom);
+
+  document.getElementById("t_result").textContent = "✅ Profil créé ! Va dans 'Profs' pour vérifier.";
+
+  // reset
+  document.getElementById("t_name").value = "";
+  document.getElementById("t_spec").value = "";
+
+  renderTeachers();
+}<label>Photo (lien image)</label>
+<input id="t_photo" placeholder="Ex: https://.../photo.jpg">
+
+<label>WhatsApp (numéro international)</label>
+<input id="t_wa" placeholder="Ex: +15145551234">
+
+<label>Disponibilités (ex: Lun-Mer-Ven 18h-21h)</label>
+<input id="t_avail" placeholder="Ex: Lun–Ven 18h–21h">const newT = {
+  id: Date.now(),
+  name: name,
+  lang: lang,
+  specialty: spec,
+  price: price,
+  photo: photo || "https://picsum.photos/200?random=" + Date.now(),
+  wa: wa,
+  avail: avail || "À définir"
+};document.getElementById("t_photo").value = "";
+document.getElementById("t_wa").value = "";
+document.getElementById("t_avail").value = "";div.innerHTML = `
+  <h3>${t.name} • ${t.lang}</h3>
+  <p><span class="tag">${t.specialty}</span> <span class="tag">${priceLabel(t.price)}</span></p>
+  <div class="row">
+    <div><button class="btn2" onclick="prefillBooking('${t.lang}','${t.name}')">Réserver</button></div>
+    <div><button class="btn2" onclick="toggleFav(${t.id})">${isFav ? "Retirer ⭐" : "Ajouter ⭐"}</button></div>
+  </div>
+`;div.innerHTML = `
+  <div class="row">
+    <div style="max-width:80px;">
+      <img src="${t.photo || "https://picsum.photos/200?random="+t.id}" style="width:70px;height:70px;border-radius:16px;object-fit:cover;">
+    </div>
+    <div style="text-align:left;">
+      <h3 style="margin:0">${t.name} • ${t.lang}</h3>
+      <div class="small">${t.avail ? "🗓 " + t.avail : "🗓 À définir"}</div>
+      <p style="margin:8px 0 0 0;">
+        <span class="tag">${t.specialty}</span>
+        <span class="tag">${priceLabel(t.price)}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:10px;">
+    <div><button class="btn2" onclick="prefillBooking('${t.lang}','${t.name}')">Réserver</button></div>
+    <div><button class="btn2" onclick="toggleFav(${t.id})">${isFav ? "Retirer ⭐" : "Ajouter ⭐"}</button></div>
+  </div>
+
+  <div style="margin-top:10px;">
+    ${t.wa ? `<button class="btn" onclick="openWhatsApp('${t.wa}','${t.name}')">WhatsApp ${t.name}</button>` : `<button class="btn2" disabled>WhatsApp non renseigné</button>`}
+  </div>
+`;function openWhatsApp(number, teacherName){
+  // Nettoie le numéro: garde chiffres uniquement
+  const clean = (number || "").replace(/[^\d]/g, "");
+  if(!clean){
+    alert("Numéro WhatsApp invalide.");
+    return;
+  }
+
+  const text = encodeURIComponent("Bonjour " + teacherName + ", je viens de BOSHA. Je veux réserver un cours 🙏🏾");
+  const url = "https://wa.me/" + clean + "?text=" + text;
+
+  window.open(url, "_blank");
+}const PAYMENT = {
+  currency: "CAD",
+  sessionLabel: "Session BOSHA",
+  // Mets tes liens ici quand tu les as
+  stripeLink: "https://buy.stripe.com/TON_LIEN",
+  paypalLink: "https://paypal.me/TON_LIEN"
+};function payNow(method){
+  let url = "";
+  if(method === "stripe") url = PAYMENT.stripeLink;
+  if(method === "paypal") url = PAYMENT.paypalLink;
+
+  if(!url || url.includes("TON_LIEN")){
+    alert("Lien de paiement pas encore configuré. Ajoute ton lien Stripe/PayPal dans le code.");
+    return;
+  }
+
+  window.open(url, "_blank");
+}<div class="card">
+  <h3>Paiement</h3>
+  <p class="small">Pour confirmer la réservation, paie la session (ou dépôt). Ensuite reviens et envoie la demande.</p>
+  <div class="row">
+    <div><button class="btn" onclick="payNow('stripe')">Payer avec Stripe</button></div>
+    <div><button class="btn2" onclick="payNow('paypal')">Payer avec PayPal</button></div>
+  </div>
+</div><label style="display:flex;gap:10px;align-items:center;justify-content:flex-start;">
+  <input id="paidCheck" type="checkbox" style="width:auto;margin:0;">
+  <span>J’ai effectué le paiement</span>
+</label><label style="display:flex;gap:10px;align-items:center;justify-content:flex-start;">
+  <input id="paidCheck" type="checkbox" style="width:auto;margin:0;">
+  <span>J’ai effectué le paiement</span>
+</label>const paid = document.getElementById("paidCheck").checked;
+if(!paid){
+  document.getElementById("bookingResult").textContent = "Coche ‘J’ai effectué le paiement’ pour confirmer.";
+  return;
+}
