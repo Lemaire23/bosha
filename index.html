@@ -2,17 +2,30 @@
 <html><meta charset="UTF-8">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BOSHA</title>
-  <link rel="apple-touch-icon" href="icon.png.png">
+  <meta name="viewport" 
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+content="width=device-width, initial-scale=1"><title>BOSHA</title><link rel="apple-touch-icon" href="icon.png.png">
+<link rel="manifest" href="manifest.webmanifest">
 </head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BOSHA</title>
   <style>
-    body{
+#splash{
+inset:0;
+
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
 margin:0;
 font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 background:#f6f6f6;
+<div id="splash" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <img src="icon.png" style="width:120px;height:120px;border-radius:24px;" alt="BOSHA">
+</div>
 
 padding-top: env(safe-area-inset-top);
 padding-bottom: env(safe-area-inset-bottom);
@@ -26,7 +39,7 @@ padding-bottom: env(safe-area-inset-bottom);
     .row{display:flex;gap:10px;}
     .row > div{flex:1;}
     .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#f0f0f0;margin-right:6px;font-size:12px;}
-    .nav{
+.nav{
 position:fixed;
 left:0;
 right:0;
@@ -37,15 +50,36 @@ display:flex;
 align-items:center;
 }
 
-    .nav button{flex:1;padding:14px 8px;color:#fff;background:#000;border:none;font-size:14px;opacity:.85}
+.nav button{
+flex:1;
+padding:14px 8px;
+color:#fff;
+background:#000;
+border:none;
+font-size:14px;
+opacity:.85;
+}
     .nav button.activeBtn{opacity:1;font-weight:bold;}
     .small{font-size:12px;color:#666;margin-top:6px}
     .top{background:#000;color:#fff;padding:18px;border-bottom-left-radius:18px;border-bottom-right-radius:18px;}
-    .top p{opacity:.9;margin:6px 0 0 0}
+    .top p{opacity:.9;margin:6px 0 0 0} a
   </style>
 </head>
+<script>
+setTimeout(()=>{
+const s=document.getElementById("splash");
+if(s) s.remove();
+},900);
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
 <body>
-
+<div id="splash">
+  <img src="icon.png.png" alt="BOSHA">
+</div>
   <!-- HOME -->
   <div id="home" class="page active">
     <div class="top">
@@ -302,7 +336,7 @@ align-items:center;
   }
 
   function submitBooking(){
-    const name = document.getElementById("name").value.trim();
+    if(!checkPayment()) return;const name = document.getElementById("name").value.trim();
     const lang = document.getElementById("lang").value;
     const level = document.getElementById("level").value;
     const goal = document.getElementById("goal").value.trim();
@@ -476,11 +510,22 @@ document.getElementById("t_avail").value = "";div.innerHTML = `
 </div><label style="display:flex;gap:10px;align-items:center;justify-content:flex-start;">
   <input id="paidCheck" type="checkbox" style="width:auto;margin:0;">
   <span>J’ai effectué le paiement</span>
-</label><label style="display:flex;gap:10px;align-items:center;justify-content:flex-start;">
-  <input id="paidCheck" type="checkbox" style="width:auto;margin:0;">
-  <span>J’ai effectué le paiement</span>
-</label>const paid = document.getElementById("paidCheck").checked;
+</label>
+<script>
+
+
+490 function checkPayment(){
+
+const paid = document.getElementById("paidCheck").checked;
+
 if(!paid){
-  document.getElementById("bookingResult").textContent = "Coche ‘J’ai effectué le paiement’ pour confirmer.";
-  return;
+document.getElementById("bookingResult").textContent =
+"Coche 'J’ai effectué le paiement' pour confirmer.";
+return;
 }
+
+}
+
+</script>
+</body>
+</html>
